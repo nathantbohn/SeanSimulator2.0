@@ -20,12 +20,15 @@ function showScreen(name) {
 
 // ── Audio ────────────────────────────────────────────────────────────────────
 
-const menuMusic    = document.getElementById('menu-music');
+const menuMusic     = document.getElementById('menu-music');
 const prologueMusic = document.getElementById('prologue-music');
+const level1Music   = document.getElementById('level1-music');
 
 function startMenuMusic() {
   prologueMusic.pause();
   prologueMusic.currentTime = 0;
+  level1Music.pause();
+  level1Music.currentTime = 0;
   menuMusic.currentTime = 0;
   menuMusic.play().catch(() => {
     document.addEventListener('click', () => menuMusic.play(), { once: true });
@@ -36,6 +39,18 @@ function startPrologueMusic() {
   menuMusic.pause();
   prologueMusic.currentTime = 0;
   prologueMusic.play().catch(() => {});
+}
+
+function startLevel1Music() {
+  prologueMusic.pause();
+  prologueMusic.currentTime = 0;
+  level1Music.currentTime = 0;
+  level1Music.play().catch(() => {});
+}
+
+function stopLevel1Music() {
+  level1Music.pause();
+  level1Music.currentTime = 0;
 }
 
 // ── Prologue ─────────────────────────────────────────────────────────────────
@@ -98,9 +113,11 @@ function endPrologue() {
   prologueMusic.currentTime = 0;
   showScreen('level1');
   Level1.start(onLevel1GameOver);
+  startLevel1Music();
 }
 
 function onLevel1GameOver(finalScore) {
+  stopLevel1Music();
   document.getElementById('gameover-score').textContent = 'SCORE: ' + String(finalScore).padStart(5, '0');
   showScreen('gameover');
 }
