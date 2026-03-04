@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <audio id="menu-music" src="audio-assets/Main Menu Music.mp3" loop></audio>
+    <audio id="menu-music"     src="audio-assets/Main Menu Music.mp3" loop></audio>
+    <audio id="prologue-music" src="audio-assets/Prologue Music.mp3"   loop></audio>
 
     <div id="game-container">
 
@@ -36,9 +37,18 @@
         <button class="btn-back">Return to Main Menu</button>
       </div>
 
-      <!-- Prologue (placeholder) -->
-      <div id="screen-prologue" class="screen content-screen">
-        <h2>Prologue</h2>
+      <!-- Prologue -->
+      <div id="screen-prologue" class="screen">
+        <div id="prologue-stage">
+          <img id="prologue-img" src="" alt="" hidden />
+          <p id="prologue-text"></p>
+        </div>
+        <p id="prologue-hint">Hit Enter to skip</p>
+      </div>
+
+      <!-- Level 1 (placeholder) -->
+      <div id="screen-level1" class="screen content-screen">
+        <h2>Level 1</h2>
         <p class="placeholder-text">[ Coming Soon ]</p>
         <button class="btn-back">Return to Main Menu</button>
       </div>
