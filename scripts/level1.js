@@ -7,10 +7,11 @@ const Level1 = (() => {
   const GRAVITY        = 0.55;
   const JUMP_FORCE     = -16;   // -13 × √1.5 ≈ -15.9 → +50% peak height
   const PLAYER_X       = 130;       // fixed screen x of player
-  const TOTAL_FRAMES   = 8;
+  const SPRITE_COLS    = 4;           // 4 frames per row
+  const SPRITE_ROWS    = 2;           // 2 rows
   const RUN_FRAMES     = [0,1,2,3,4,5,6,7];
-  const JUMP_FRAMES    = [5,6,7,6,5]; // arc feel from upper half of sheet
-  const SHOOT_FRAME    = 2;           // improvised: freeze on frame 2
+  const JUMP_FRAMES    = [5,6,7,6,5]; // row 1 frames for jump arc
+  const SHOOT_FRAME    = 2;           // row 0, col 2 as shoot pose
   const FRAME_MS       = 90;
   const AMMO_MAX       = 3;
   const LIVES_MAX      = 3;
@@ -83,9 +84,9 @@ const Level1 = (() => {
 
     groundY = H * 0.72;
 
-    // sprite sheet layout
-    frameW   = (spriteImg.naturalWidth  || 512) / TOTAL_FRAMES;
-    frameH   =  spriteImg.naturalHeight || 64;
+    // sprite sheet layout — 4 cols × 2 rows
+    frameW   = (spriteImg.naturalWidth  || 256) / SPRITE_COLS;
+    frameH   = (spriteImg.naturalHeight || 128) / SPRITE_ROWS;
     displayH = H * 0.22;
     displayW = (frameW / frameH) * displayH;
 
@@ -373,9 +374,11 @@ const Level1 = (() => {
     if (!spriteImg.complete || spriteImg.naturalWidth === 0) return;
     const frames = currentFrames();
     const fi     = frames[frameIdx % frames.length];
+    const col    = fi % SPRITE_COLS;
+    const row    = Math.floor(fi / SPRITE_COLS);
     ctx.drawImage(
       spriteImg,
-      fi * frameW, 0, frameW, frameH,
+      col * frameW, row * frameH, frameW, frameH,
       PLAYER_X, playerY, displayW, displayH
     );
   }
