@@ -50,9 +50,9 @@ html, body {
 #screen-menu {
   flex-direction: row;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   padding: 3rem 5%;
-  gap: 0;
+  gap: clamp(2rem, 5vw, 6rem);
   overflow: hidden;
   position: relative;
   background:
@@ -76,17 +76,15 @@ html, body {
 .menu-left {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 2rem;
   z-index: 1;
-  flex-shrink: 0;
-  width: 52%;
 }
 
 .game-title {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 0;
   line-height: 0.88;
 }
@@ -139,7 +137,7 @@ html, body {
 .menu-nav {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.15rem;
 }
 
@@ -197,17 +195,15 @@ html, body {
   background: transparent;
 }
 
-/* Sprite character (decorative, right side) */
+/* Civilian character image (decorative, right of title) */
 .menu-char {
-  position: absolute;
-  right: 6%;
-  bottom: 0;
-  width:  clamp(120px, 17vw, 240px);
-  height: clamp(180px, 36vh, 420px);
-  background: url('game-assets/SeanSpriteMilitary.png') no-repeat 0 100%;
-  background-size: 800% auto;
+  height: clamp(220px, 45vh, 480px);
+  width: auto;
+  object-fit: contain;
+  align-self: flex-end;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+  z-index: 1;
 }
 
 /* ── Content Screens (Rules / About) ────────────── */
