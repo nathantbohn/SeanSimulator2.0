@@ -4,7 +4,7 @@ const Level1 = (() => {
 
   // ── Constants ───────────────────────────────────────────────────────────────
 
-  const GRAVITY        = 0.55;
+  const GRAVITY        = 0.37;  // 0.55 ÷ 1.5 → 50% longer air time
   const JUMP_FORCE     = -16;   // -13 × √1.5 ≈ -15.9 → +50% peak height
   const PLAYER_X       = 130;       // fixed screen x of player
   const SPRITE_COLS    = 4;           // 4 frames per row

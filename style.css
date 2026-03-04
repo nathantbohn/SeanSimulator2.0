@@ -208,29 +208,47 @@ html, body {
 
 /* ── Content Screens (Rules / About) ────────────── */
 .content-screen {
-  justify-content: flex-start;
-  padding: 5rem 2rem 2rem;
+  justify-content: center;
+  padding: 4rem 2rem;
+  gap: 2rem;
   overflow-y: auto;
+  position: relative;
+  background:
+    radial-gradient(ellipse 50% 62% at 72% 38%, rgba(255,140,0,0.78) 0%, rgba(220,80,0,0.35) 42%, transparent 65%),
+    radial-gradient(ellipse 36% 46% at 60% 22%, rgba(200,45,0,0.62) 0%, transparent 54%),
+    radial-gradient(ellipse 68% 44% at 44% 8%,  rgba(150,30,0,0.58) 0%, transparent 58%),
+    linear-gradient(to top, #000000 0%, rgba(8,1,0,0.92) 12%, transparent 38%),
+    linear-gradient(148deg, #0e0100 0%, #340800 28%, #5c1200 50%, #340800 72%, #0e0100 100%);
 }
 
 .content-screen h2 {
-  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-family: Impact, 'Arial Black', Arial, sans-serif;
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #fff;
-  text-shadow: 0 0 30px rgba(178, 34, 34, 0.6);
+  letter-spacing: 0.1em;
+  color: #ffd700;
+  text-shadow:
+    -3px -3px 0 #1a2eaa,
+     3px -3px 0 #1a2eaa,
+    -3px  3px 0 #1a2eaa,
+     3px  3px 0 #1a2eaa,
+    -4px  0   0 #0d1a66,
+     4px  0   0 #0d1a66,
+     0   -4px 0 #0d1a66,
+     0    4px 0 #0d1a66;
   text-align: center;
 }
 
 .content-screen p {
-  max-width: 680px;
+  max-width: 640px;
   font-family: Arial, sans-serif;
   font-size: 1.05rem;
   font-weight: 400;
-  line-height: 1.75;
-  color: #ccc;
+  line-height: 1.8;
+  color: #f0ddb0;
   text-align: center;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
 }
 
 .placeholder-text {
@@ -239,25 +257,50 @@ html, body {
 }
 
 .btn-back {
-  margin-top: 1rem;
-  padding: 0.7rem 2rem;
-  font-family: inherit;
-  font-size: 0.95rem;
+  margin-top: 0.5rem;
+  padding: 0.2rem 0;
+  font-family: Impact, 'Arial Black', Arial, sans-serif;
+  font-size: clamp(1.1rem, 2.5vw, 1.8rem);
   font-weight: 900;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: #ffd700;
   background: transparent;
-  border: 1px solid #444;
+  border: none;
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  text-shadow:
+    -2px -2px 0 #000,
+     2px -2px 0 #000,
+    -2px  2px 0 #000,
+     2px  2px 0 #000;
+  transition: color 0.1s, text-shadow 0.1s;
+}
+
+.btn-back::before {
+  content: '◀';
+  font-size: 0.55em;
+  color: #cc1100;
+  text-shadow:
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000;
 }
 
 .btn-back:hover,
 .btn-back:focus-visible {
   color: #fff;
-  border-color: #888;
+  background: transparent;
   outline: none;
+  text-shadow:
+    -2px -2px 0 #000,
+     2px -2px 0 #000,
+    -2px  2px 0 #000,
+     2px  2px 0 #000,
+     0    0  18px rgba(255,230,120,0.75);
 }
 
 /* ── Level 1 Canvas ─────────────────────────────── */
