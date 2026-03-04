@@ -1,0 +1,149 @@
+:root {
+  --bg:           #0d0d0d;
+  --bg-surface:   #141414;
+  --accent:       #b22222;
+  --accent-light: #e53333;
+  --text:         #f0f0f0;
+  --text-dim:     #888;
+  --border:       #b22222;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Arial Black', 'Impact', 'Haettenschweiler', Arial, sans-serif;
+  overflow: hidden;
+}
+
+/* ── Game Container ─────────────────────────────── */
+#game-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* ── Screens ────────────────────────────────────── */
+.screen {
+  display: none;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  padding: 2rem;
+}
+
+.screen.active {
+  display: flex;
+}
+
+/* ── Main Menu ──────────────────────────────────── */
+.game-title {
+  font-size: clamp(2.8rem, 8vw, 6rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.05;
+  text-align: center;
+  color: #fff;
+  text-shadow:
+    0 0 40px rgba(178, 34, 34, 0.8),
+    0 0 80px rgba(178, 34, 34, 0.4),
+    0 3px 0 #000;
+}
+
+.menu-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.menu-nav button {
+  width: 260px;
+  padding: 0.85rem 2rem;
+  font-family: inherit;
+  font-size: 1.25rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text);
+  background: transparent;
+  border: 2px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s, color 0.15s;
+}
+
+.menu-nav button:hover,
+.menu-nav button:focus-visible {
+  background: var(--accent);
+  box-shadow: 0 0 24px rgba(178, 34, 34, 0.7);
+  outline: none;
+}
+
+.menu-nav button:active {
+  background: var(--accent-light);
+}
+
+/* ── Content Screens (Rules / About) ────────────── */
+.content-screen {
+  justify-content: flex-start;
+  padding: 5rem 2rem 2rem;
+  overflow-y: auto;
+}
+
+.content-screen h2 {
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #fff;
+  text-shadow: 0 0 30px rgba(178, 34, 34, 0.6);
+  text-align: center;
+}
+
+.content-screen p {
+  max-width: 680px;
+  font-family: Arial, sans-serif;
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.75;
+  color: #ccc;
+  text-align: center;
+}
+
+.placeholder-text {
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+.btn-back {
+  margin-top: 1rem;
+  padding: 0.7rem 2rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: transparent;
+  border: 1px solid #444;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.btn-back:hover,
+.btn-back:focus-visible {
+  color: #fff;
+  border-color: #888;
+  outline: none;
+}

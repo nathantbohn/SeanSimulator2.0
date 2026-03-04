@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sean Simulator 2.0</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <audio id="menu-music" src="audio-assets/Main Menu Music.mp3" loop></audio>
+
+    <div id="game-container">
+
+      <!-- Main Menu -->
+      <div id="screen-menu" class="screen active">
+        <h1 class="game-title">Sean Simulator<br>2.0</h1>
+        <nav class="menu-nav">
+          <button id="btn-play">Play</button>
+          <button id="btn-rules">Rules</button>
+          <button id="btn-about">About</button>
+        </nav>
+      </div>
+
+      <!-- Rules Screen -->
+      <div id="screen-rules" class="screen content-screen">
+        <h2>Rules</h2>
+        <p>Have fun</p>
+        <button class="btn-back">Return to Main Menu</button>
+      </div>
+
+      <!-- About Screen -->
+      <div id="screen-about" class="screen content-screen">
+        <h2>About Sean Simulator 2.0</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <button class="btn-back">Return to Main Menu</button>
+      </div>
+
+      <!-- Prologue (placeholder) -->
+      <div id="screen-prologue" class="screen content-screen">
+        <h2>Prologue</h2>
+        <p class="placeholder-text">[ Coming Soon ]</p>
+        <button class="btn-back">Return to Main Menu</button>
+      </div>
+
+    </div>
+
+    <script src="scripts/main.js"></script>
+  </body>
+</html>
