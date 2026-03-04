@@ -281,20 +281,27 @@ html, body {
 }
 
 #gameover-title {
+  font-family: Impact, 'Arial Black', sans-serif;
   font-size: clamp(3.5rem, 11vw, 8rem);
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #fff;
+  letter-spacing: 0.15em;
+  color: #ff1111;
+  /* Hard black outline + stacked 3D drop shadow — no blur, pure 80s arcade */
   text-shadow:
-    0 0 20px #ff0000,
-    0 0 60px rgba(255,0,0,0.5);
-  animation: go-pulse 1s ease-in-out infinite alternate;
+    -3px -3px 0 #000,
+     3px -3px 0 #000,
+    -3px  3px 0 #000,
+     3px  3px 0 #000,
+     5px  5px 0 #8b0000,
+     8px  8px 0 #5a0000,
+    10px 10px 0 #2e0000;
+  animation: go-flash 0.9s step-end infinite;
 }
 
-@keyframes go-pulse {
-  from { opacity: 1;   text-shadow: 0 0 20px #ff0000, 0 0 60px rgba(255,0,0,0.5); }
-  to   { opacity: 0.7; text-shadow: 0 0 40px #ff0000, 0 0 100px rgba(255,0,0,0.3); }
+@keyframes go-flash {
+  0%, 100% { color: #ff1111; }
+  50%       { color: #ffffff; }
 }
 
 #gameover-score {
