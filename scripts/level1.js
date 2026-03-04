@@ -5,7 +5,7 @@ const Level1 = (() => {
   // ── Constants ───────────────────────────────────────────────────────────────
 
   const GRAVITY        = 0.55;
-  const JUMP_FORCE     = -13;
+  const JUMP_FORCE     = -16;   // -13 × √1.5 ≈ -15.9 → +50% peak height
   const PLAYER_X       = 130;       // fixed screen x of player
   const TOTAL_FRAMES   = 8;
   const RUN_FRAMES     = [0,1,2,3,4,5,6,7];
@@ -54,11 +54,20 @@ const Level1 = (() => {
   function loadAssets(cb) {
     let n = 0;
     const done = () => { if (++n === 3) cb(); };
-    bgImg.onload = enemyImg.onload = spriteImg.onload = done;
-    bgImg.onerror = enemyImg.onerror = spriteImg.onerror = done;
-    bgImg.src     = 'image-assets/level_1_background.png';
-    enemyImg.src  = 'image-assets/level_1_enemy.png';
-    spriteImg.src = 'game-assets/SeanSpriteMilitary.png';
+    [
+      [bgImg,     'image-assets/level_1_background.png'],
+      [enemyImg,  'image-assets/level_1_enemy.png'],
+      [spriteImg, 'game-assets/SeanSpriteMilitary.png'],
+    ].forEach(([img, src]) => {
+      // If already loaded (cached from a previous run), count immediately
+      // instead of reassigning onload and risk firing done() twice.
+      if (img.complete && img.naturalWidth > 0) {
+        done();
+      } else {
+        img.onload = img.onerror = done;
+        img.src = src;
+      }
+    });
   }
 
   // ── Init ────────────────────────────────────────────────────────────────────
@@ -460,6 +469,7 @@ const Level1 = (() => {
   // ── Public API ────────────────────────────────────────────────────────────────
 
   function start(gameOverCb) {
+    stop(); // cancel any existing loop before starting a new one
     canvas     = document.getElementById('game-canvas');
     ctx        = canvas.getContext('2d');
     onGameOver = gameOverCb;
