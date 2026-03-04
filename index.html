@@ -46,15 +46,21 @@
         <p id="prologue-hint">Hit Enter to skip</p>
       </div>
 
-      <!-- Level 1 (placeholder) -->
-      <div id="screen-level1" class="screen content-screen">
-        <h2>Level 1</h2>
-        <p class="placeholder-text">[ Coming Soon ]</p>
-        <button class="btn-back">Return to Main Menu</button>
+      <!-- Level 1 -->
+      <div id="screen-level1" class="screen">
+        <canvas id="game-canvas"></canvas>
+      </div>
+
+      <!-- Game Over -->
+      <div id="screen-gameover" class="screen">
+        <h1 id="gameover-title">Game Over</h1>
+        <p id="gameover-score"></p>
+        <p id="gameover-hint">Click anywhere to return to main menu</p>
       </div>
 
     </div>
 
+    <script src="scripts/level1.js"></script>
     <script src="scripts/main.js"></script>
   </body>
 </html>

@@ -8,6 +8,7 @@ const screens = {
   about:    document.getElementById('screen-about'),
   prologue: document.getElementById('screen-prologue'),
   level1:   document.getElementById('screen-level1'),
+  gameover: document.getElementById('screen-gameover'),
 };
 
 function showScreen(name) {
@@ -96,7 +97,18 @@ function endPrologue() {
   prologueMusic.pause();
   prologueMusic.currentTime = 0;
   showScreen('level1');
+  Level1.start(onLevel1GameOver);
 }
+
+function onLevel1GameOver(finalScore) {
+  document.getElementById('gameover-score').textContent = 'SCORE: ' + String(finalScore).padStart(5, '0');
+  showScreen('gameover');
+}
+
+screens.gameover.addEventListener('click', () => {
+  showScreen('menu');
+  startMenuMusic();
+});
 
 function onPrologueKey(e) {
   if (e.key === 'Enter') advancePrologue();
