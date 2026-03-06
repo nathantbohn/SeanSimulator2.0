@@ -19,22 +19,25 @@ const Level1 = (() => {
   const PROJ_SPEED     = 9;           // px/frame (left-to-right toward enemies)
   const SHOOT_HOLD_MS  = 200;
   const HIT_SHRINK     = 0.22;        // shrink hitbox fraction per side
+  const AIR_ENEMY_DELAY = 20000;      // ms before air enemies start appearing
+  const AIR_Y_FACTOR    = 0.44;       // top of air enemy as fraction of canvas height
 
   // ── State ───────────────────────────────────────────────────────────────────
 
   let canvas, ctx, running, rafId, lastTime, onGameOver;
 
-  const bgImg     = new Image();
-  const enemyImg  = new Image();
-  const spriteImg = new Image();
+  const bgImg       = new Image();
+  const enemyImg    = new Image();
+  const airEnemyImg = new Image();
+  const spriteImg   = new Image();
 
   // layout (computed on init)
   let groundY, frameW, frameH, displayW, displayH;
-  let bgW, enemyDW, enemyDH;
+  let bgW, enemyDW, enemyDH, airEnemyDW, airEnemyDH;
 
   // objects
-  let obstacles, projectiles, effects;
-  let spawnTimer;
+  let obstacles, airObstacles, projectiles, effects;
+  let spawnTimer, airSpawnTimer, elapsedMs;
 
   // scrolling
   let bgX, bgSpeed;
@@ -54,11 +57,12 @@ const Level1 = (() => {
 
   function loadAssets(cb) {
     let n = 0;
-    const done = () => { if (++n === 3) cb(); };
+    const done = () => { if (++n === 4) cb(); };
     [
-      [bgImg,     'image-assets/level_1_background.png'],
-      [enemyImg,  'image-assets/level_1_enemy.png'],
-      [spriteImg, 'game-assets/SeanSpriteMilitary.png'],
+      [bgImg,       'image-assets/level_1_background.png'],
+      [enemyImg,    'image-assets/level_1_enemy.png'],
+      [airEnemyImg, 'image-assets/air_enemy_1.png'],
+      [spriteImg,   'game-assets/SeanSpriteMilitary.png'],
     ].forEach(([img, src]) => {
       // If already loaded (cached from a previous run), count immediately
       // instead of reassigning onload and risk firing done() twice.
@@ -104,6 +108,13 @@ const Level1 = (() => {
     enemyDW = eNatW * eScale;
     enemyDH = eNatH * eScale;
 
+    // air enemy size (scale to ~14% of screen height)
+    const aeNatH = airEnemyImg.naturalHeight || 64;
+    const aeNatW = airEnemyImg.naturalWidth  || 64;
+    const aeScale = (H * 0.14) / aeNatH;
+    airEnemyDW = aeNatW * aeScale;
+    airEnemyDH = aeNatH * aeScale;
+
     // player
     playerY      = groundY - displayH;
     velY         = 0;
@@ -114,10 +125,13 @@ const Level1 = (() => {
     shootHoldMs  = 0;
 
     // game objects
-    obstacles   = [];
-    projectiles = [];
-    effects     = [];
-    spawnTimer  = 0;
+    obstacles    = [];
+    airObstacles = [];
+    projectiles  = [];
+    effects      = [];
+    spawnTimer    = 0;
+    airSpawnTimer = 0;
+    elapsedMs     = 0;
 
     // HUD state
     score        = 0;
@@ -148,10 +162,12 @@ const Level1 = (() => {
   // ── Update ───────────────────────────────────────────────────────────────────
 
   function update(dt) {
+    elapsedMs += dt;
     updateBackground();
     handleInput();
     updatePlayer(dt);
     updateObstacles(dt);
+    updateAirObstacles(dt);
     updateProjectiles();
     updateEffects(dt);
     updateReload(dt);
@@ -283,6 +299,49 @@ const Level1 = (() => {
     }
   }
 
+  function updateAirObstacles(dt) {
+    if (elapsedMs < AIR_ENEMY_DELAY) return;
+
+    const W = canvas.width;
+    const H = canvas.height;
+
+    const airSpeed   = 4   + score * 0.025;
+    const airSpawnMs = Math.max(1200, 3200 - score * 4);
+
+    airSpawnTimer += dt;
+    if (airSpawnTimer >= airSpawnMs) {
+      airSpawnTimer = 0;
+      airObstacles.push({
+        x:      W + 20,
+        y:      H * AIR_Y_FACTOR,
+        w:      airEnemyDW,
+        h:      airEnemyDH,
+        speed:  airSpeed,
+        scored: false,
+      });
+    }
+
+    for (let i = airObstacles.length - 1; i >= 0; i--) {
+      const ob = airObstacles[i];
+      ob.x -= ob.speed;
+
+      if (ob.x + ob.w < 0) { airObstacles.splice(i, 1); continue; }
+
+      // shrunk player hitbox
+      const hx = PLAYER_X + displayW * HIT_SHRINK;
+      const hy = playerY  + displayH * HIT_SHRINK;
+      const hw = displayW * (1 - HIT_SHRINK * 2);
+      const hh = displayH * (1 - HIT_SHRINK * 2);
+
+      if (collides(hx, hy, hw, hh, ob.x, ob.y, ob.w, ob.h)) {
+        spawnBurst(ob.x + ob.w * 0.5, ob.y + ob.h * 0.5, '#ff3300');
+        airObstacles.splice(i, 1);
+        lives--;
+        if (lives <= 0) { triggerGameOver(); return; }
+      }
+    }
+  }
+
   function updateProjectiles() {
     for (let i = projectiles.length - 1; i >= 0; i--) {
       const p = projectiles[i];
@@ -290,6 +349,7 @@ const Level1 = (() => {
       if (p.x > canvas.width) { projectiles.splice(i, 1); continue; }
 
       let hit = false;
+
       for (let j = obstacles.length - 1; j >= 0; j--) {
         const ob = obstacles[j];
         if (collides(p.x, p.y, p.w, p.h, ob.x, ob.y, ob.w, ob.h)) {
@@ -300,6 +360,20 @@ const Level1 = (() => {
           break;
         }
       }
+
+      if (!hit) {
+        for (let j = airObstacles.length - 1; j >= 0; j--) {
+          const ob = airObstacles[j];
+          if (collides(p.x, p.y, p.w, p.h, ob.x, ob.y, ob.w, ob.h)) {
+            spawnBurst(ob.x + ob.w * 0.5, ob.y + ob.h * 0.5, '#ffdd00');
+            airObstacles.splice(j, 1);
+            score += 5;
+            hit    = true;
+            break;
+          }
+        }
+      }
+
       if (hit) projectiles.splice(i, 1);
     }
   }
@@ -352,6 +426,7 @@ const Level1 = (() => {
     ctx.clearRect(0, 0, W, H);
     drawBackground();
     drawObstacles();
+    drawAirObstacles();
     drawProjectiles();
     drawPlayer();
     drawEffects();
@@ -387,6 +462,13 @@ const Level1 = (() => {
     if (!enemyImg.complete || enemyImg.naturalWidth === 0) return;
     for (const ob of obstacles) {
       ctx.drawImage(enemyImg, ob.x, ob.y, ob.w, ob.h);
+    }
+  }
+
+  function drawAirObstacles() {
+    if (!airEnemyImg.complete || airEnemyImg.naturalWidth === 0) return;
+    for (const ob of airObstacles) {
+      ctx.drawImage(airEnemyImg, ob.x, ob.y, ob.w, ob.h);
     }
   }
 
