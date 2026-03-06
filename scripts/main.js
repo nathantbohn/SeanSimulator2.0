@@ -55,12 +55,13 @@ function renderLeaderboard() {
 // ── Screen Manager ───────────────────────────────────────────────────────────
 
 const screens = {
-  menu:     document.getElementById('screen-menu'),
-  rules:    document.getElementById('screen-rules'),
-  about:    document.getElementById('screen-about'),
-  prologue: document.getElementById('screen-prologue'),
-  level1:   document.getElementById('screen-level1'),
-  gameover: document.getElementById('screen-gameover'),
+  menu:           document.getElementById('screen-menu'),
+  rules:          document.getElementById('screen-rules'),
+  about:          document.getElementById('screen-about'),
+  prologue:       document.getElementById('screen-prologue'),
+  level1:         document.getElementById('screen-level1'),
+  level1complete: document.getElementById('screen-level1complete'),
+  gameover:       document.getElementById('screen-gameover'),
 };
 
 function showScreen(name) {
@@ -164,12 +165,18 @@ function endPrologue() {
   prologueMusic.pause();
   prologueMusic.currentTime = 0;
   showScreen('level1');
-  Level1.start(onLevel1GameOver);
+  Level1.start(onLevel1GameOver, onLevel1Complete);
   startLevel1Music();
 }
 
 let pendingScore = 0;
 let scoreSubmitted = false;
+
+function onLevel1Complete(finalScore) {
+  stopLevel1Music();
+  document.getElementById('l1c-score').textContent = 'SCORE: ' + String(finalScore).padStart(5, '0');
+  showScreen('level1complete');
+}
 
 function onLevel1GameOver(finalScore) {
   stopLevel1Music();
@@ -232,6 +239,11 @@ document.getElementById('btn-rules').addEventListener('click', () => {
 
 document.getElementById('btn-about').addEventListener('click', () => {
   showScreen('about');
+});
+
+document.getElementById('btn-l1c-menu').addEventListener('click', () => {
+  showScreen('menu');
+  startMenuMusic();
 });
 
 document.querySelectorAll('.btn-back').forEach(btn => {

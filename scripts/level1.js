@@ -22,10 +22,12 @@ const Level1 = (() => {
   const AIR_ENEMY_DELAY = 20000;      // ms before air enemies start appearing
   const AIR_Y_MIN       = 0.28;       // highest air enemy can appear (fraction of H)
   const AIR_Y_MAX       = 0.52;       // lowest air enemy can appear (fraction of H)
+  const LEVEL_LENGTH_M  = 5000;       // meters to complete the level
+  const MS_PER_METER    = 30;         // milliseconds per meter (5000m ≈ 150 s)
 
   // ── State ───────────────────────────────────────────────────────────────────
 
-  let canvas, ctx, running, rafId, lastTime, onGameOver;
+  let canvas, ctx, running, rafId, lastTime, onGameOver, onLevelComplete;
 
   const bgImg       = new Image();
   const enemyImg    = new Image();
@@ -165,6 +167,10 @@ const Level1 = (() => {
 
   function update(dt) {
     elapsedMs += dt;
+    if (Math.floor(elapsedMs / MS_PER_METER) >= LEVEL_LENGTH_M) {
+      triggerLevelComplete();
+      return;
+    }
     updateBackground();
     handleInput();
     updatePlayer(dt);
@@ -423,6 +429,14 @@ const Level1 = (() => {
     if (onGameOver) onGameOver(score);
   }
 
+  function triggerLevelComplete() {
+    running = false;
+    cancelAnimationFrame(rafId);
+    document.removeEventListener('keydown', onKeyDown);
+    document.removeEventListener('keyup',   onKeyUp);
+    if (onLevelComplete) onLevelComplete(score);
+  }
+
   // ── Draw ─────────────────────────────────────────────────────────────────────
 
   function draw() {
@@ -524,6 +538,35 @@ const Level1 = (() => {
     ctx.fillStyle = '#ffffff';
     ctx.fillText(String(score).padStart(5, '0'), W / 2, pad);
 
+    // ── PROGRESS BAR (below score) ──
+    const dist   = Math.min(LEVEL_LENGTH_M, Math.floor(elapsedMs / MS_PER_METER));
+    const fill   = dist / LEVEL_LENGTH_M;
+    const barW   = Math.min(280, W * 0.26);
+    const barH   = 7;
+    const barX   = W / 2 - barW / 2;
+    const barY   = pad + 34;
+
+    ctx.shadowBlur = 0;
+    ctx.fillStyle  = 'rgba(0,0,0,0.55)';
+    ctx.fillRect(barX - 1, barY - 1, barW + 2, barH + 2);
+    ctx.fillStyle  = '#222';
+    ctx.fillRect(barX, barY, barW, barH);
+
+    if (fill > 0) {
+      const grad = ctx.createLinearGradient(barX, 0, barX + barW, 0);
+      grad.addColorStop(0,    '#22cc44');
+      grad.addColorStop(0.65, '#ddcc00');
+      grad.addColorStop(1,    '#ff8800');
+      ctx.fillStyle = grad;
+      ctx.fillRect(barX, barY, barW * fill, barH);
+    }
+
+    ctx.shadowBlur = 5;
+    ctx.font       = 'bold 10px Arial';
+    ctx.textAlign  = 'center';
+    ctx.fillStyle  = '#aaaaaa';
+    ctx.fillText(dist + ' / ' + LEVEL_LENGTH_M + ' m', W / 2, barY + barH + 5);
+
     // ── AMMO (top right) ──
     ctx.textAlign = 'right';
     ctx.font      = 'bold 24px Arial';
@@ -558,11 +601,12 @@ const Level1 = (() => {
 
   // ── Public API ────────────────────────────────────────────────────────────────
 
-  function start(gameOverCb) {
+  function start(gameOverCb, levelCompleteCb) {
     stop(); // cancel any existing loop before starting a new one
-    canvas     = document.getElementById('game-canvas');
-    ctx        = canvas.getContext('2d');
-    onGameOver = gameOverCb;
+    canvas           = document.getElementById('game-canvas');
+    ctx              = canvas.getContext('2d');
+    onGameOver       = gameOverCb;
+    onLevelComplete  = levelCompleteCb;
 
     loadAssets(() => {
       init();

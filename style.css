@@ -316,6 +316,50 @@ html, body {
   height: 100%;
 }
 
+/* ── Level 1 Complete ────────────────────────────── */
+#screen-level1complete {
+  background: #000;
+  gap: 1.8rem;
+}
+
+#l1c-title {
+  font-family: Impact, 'Arial Black', sans-serif;
+  font-size: clamp(3rem, 9vw, 6.5rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #44ee66;
+  text-shadow:
+    -3px -3px 0 #000,
+     3px -3px 0 #000,
+    -3px  3px 0 #000,
+     3px  3px 0 #000,
+     5px  5px 0 #006622,
+     8px  8px 0 #004411;
+  animation: lc-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes lc-pulse {
+  0%, 100% { text-shadow:
+    -3px -3px 0 #000,  3px -3px 0 #000,
+    -3px  3px 0 #000,  3px  3px 0 #000,
+     5px  5px 0 #006622, 8px 8px 0 #004411; }
+  50%       { text-shadow:
+    -3px -3px 0 #000,  3px -3px 0 #000,
+    -3px  3px 0 #000,  3px  3px 0 #000,
+     5px  5px 0 #006622, 8px 8px 0 #004411,
+     0    0  28px rgba(80,255,120,0.55); }
+}
+
+#l1c-score {
+  font-family: 'Arial Black', Arial, sans-serif;
+  font-size: clamp(1.2rem, 3.5vw, 2.2rem);
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  color: #ffff00;
+  text-shadow: 0 0 12px rgba(255,255,0,0.6);
+}
+
 /* ── Game Over ───────────────────────────────────── */
 #screen-gameover {
   background: #000;
