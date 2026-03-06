@@ -45,6 +45,13 @@ const Level2 = (() => {
   const FIGHTER_MELEE_FRAMES   = [4,5,6,7];
   const FIGHTER_COST           = 25;
 
+  // Oil Derrick
+  const DERRICK_COLS      = 5;
+  const DERRICK_ROWS      = 3;
+  const DERRICK_H_FACTOR  = 0.40;   // height as fraction of canvas height
+  const DERRICK_FRAME_MS  = 130;    // ms per frame — idle pump cycle
+  const DERRICK_GUSH_MS   = 75;     // ms per frame — active gushing
+
   // Enemy AI
   const ENEMY_STARTING_GOLD      = 50;
   const ENEMY_FIGHTER_COST       = 25;
@@ -59,8 +66,9 @@ const Level2 = (() => {
   let canvas, ctx, running, rafId, lastTime;
   let onWin, onLose;
 
-  const spriteImg = new Image();  // military sheet  (statues + fighters)
-  const minerImg  = new Image();  // civilian sheet  (miners)
+  const spriteImg  = new Image();  // military sheet  (statues + fighters)
+  const minerImg   = new Image();  // civilian sheet  (miners)
+  const derrickImg = new Image();  // oil derrick sprite sheet
 
   let tintCanvas, tintCtx;        // offscreen canvas for red-tinting enemy sprites
 
@@ -80,15 +88,17 @@ const Level2 = (() => {
 
   let score;
   let cameraFocusX;
+  let derrick;
 
   // ── Asset Loading ────────────────────────────────────────────────────────────
 
   function loadAssets(cb) {
     let n = 0;
-    const done = () => { if (++n === 2) cb(); };
+    const done = () => { if (++n === 3) cb(); };
     [
-      [spriteImg, 'game-assets/SeanSpriteMilitary.png'],
-      [minerImg,  'game-assets/SeanSpriteCivilian.png'],
+      [spriteImg,  'game-assets/SeanSpriteMilitary.png'],
+      [minerImg,   'game-assets/SeanSpriteCivilian.png'],
+      [derrickImg, 'game-assets/oil_sprites.png'],
     ].forEach(([img, src]) => {
       if (img.complete && img.naturalWidth > 0) { done(); }
       else { img.onload = img.onerror = done; img.src = src; }
@@ -136,6 +146,7 @@ const Level2 = (() => {
     gameElapsedMs     = 0;
     score             = 0;
     cameraFocusX      = canvas.width * 0.5;
+    derrick           = { frameIdx: 0, frameTick: 0, gushing: false };
 
     tintCanvas        = document.createElement('canvas');
     tintCtx           = tintCanvas.getContext('2d');
@@ -160,6 +171,7 @@ const Level2 = (() => {
     updateFighters(dt);
     updateFighterProjectiles(dt);
     updateEnemyAI(dt);
+    updateDerrick(dt);
     updateCamera(dt);
   }
 
@@ -477,6 +489,7 @@ const Level2 = (() => {
     ctx.translate(W / 2 - cameraFocusX, 0);
 
     drawWorldTerrain(); // base zones + centre line — world space
+    drawDerrick();      // behind all units
     drawEnemyMiners();
     drawMiners();
     drawEnemyFighters();
@@ -493,6 +506,51 @@ const Level2 = (() => {
 
     drawGoldHUD();      // screen space
     drawUnitCards();    // screen space
+  }
+
+  // ── Oil Derrick ───────────────────────────────────────────────────────────────
+
+  function updateDerrick(dt) {
+    // Gush when any miner is actively mining at the site
+    derrick.gushing = miners.some(m => m.state === 'mining') ||
+                      enemyMiners.some(m => m.state === 'mining');
+
+    derrick.frameTick += dt;
+    const ms = derrick.gushing ? DERRICK_GUSH_MS : DERRICK_FRAME_MS;
+    if (derrick.frameTick >= ms) {
+      derrick.frameTick -= ms;
+      if (derrick.gushing) {
+        derrick.frameIdx = (derrick.frameIdx + 1) % 4;   // 4 gush frames
+      } else {
+        derrick.frameIdx = (derrick.frameIdx + 1) % 10;  // 10 idle pump frames
+      }
+    }
+  }
+
+  function drawDerrick() {
+    if (!derrickImg.complete || derrickImg.naturalWidth === 0) return;
+    const W = canvas.width, H = canvas.height;
+
+    const fW = derrickImg.naturalWidth  / DERRICK_COLS;
+    const fH = derrickImg.naturalHeight / DERRICK_ROWS;
+
+    let col, row;
+    if (derrick.gushing) {
+      // Row 0, cols 1-4 — oil gushing animation (col 0 of row 0 is blank)
+      col = 1 + derrick.frameIdx;
+      row = 0;
+    } else {
+      // Rows 1-2, cols 0-4 — 10-frame idle pump cycle
+      col = derrick.frameIdx % DERRICK_COLS;
+      row = 1 + Math.floor(derrick.frameIdx / DERRICK_COLS);
+    }
+
+    const dH = H * DERRICK_H_FACTOR;
+    const dW = (fW / fH) * dH;
+    const dX = W * 0.5 - dW / 2;
+    const dY = groundY - dH;
+
+    ctx.drawImage(derrickImg, col * fW, row * fH, fW, fH, dX, dY, dW, dH);
   }
 
   function drawBackground() {
