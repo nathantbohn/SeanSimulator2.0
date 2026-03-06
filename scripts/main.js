@@ -11,8 +11,14 @@ function loadScores() {
 }
 
 function saveScore(name, score) {
-  const scores = loadScores();
-  scores.push({ name: name.trim() || 'PLAYER', score });
+  const trimmed = name.trim() || 'PLAYER';
+  const scores  = loadScores();
+  const existing = scores.findIndex(e => e.name.toLowerCase() === trimmed.toLowerCase());
+  if (existing !== -1) {
+    if (score <= scores[existing].score) { renderLeaderboard(); return; }
+    scores.splice(existing, 1);
+  }
+  scores.push({ name: trimmed, score });
   scores.sort((a, b) => b.score - a.score);
   scores.splice(LB_MAX);
   localStorage.setItem(LB_KEY, JSON.stringify(scores));
