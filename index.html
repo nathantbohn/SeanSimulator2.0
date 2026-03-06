@@ -15,6 +15,10 @@
 
       <!-- Main Menu -->
       <div id="screen-menu" class="screen active">
+        <div id="leaderboard" aria-label="High Scores">
+          <h3 id="lb-heading">High Scores</h3>
+          <ol id="lb-list"></ol>
+        </div>
         <div class="menu-left">
           <h1 class="game-title">
             <span class="title-sean">Sean</span>
@@ -63,7 +67,14 @@
       <div id="screen-gameover" class="screen">
         <h1 id="gameover-title">Game Over</h1>
         <p id="gameover-score"></p>
-        <p id="gameover-hint">Click anywhere to return to main menu</p>
+        <div id="gameover-entry">
+          <label id="gameover-entry-label" for="gameover-name">Enter your name:</label>
+          <div id="gameover-entry-row">
+            <input id="gameover-name" type="text" maxlength="16" autocomplete="off" placeholder="PLAYER" />
+            <button id="gameover-submit">Submit</button>
+          </div>
+        </div>
+        <p id="gameover-hint">Submit your score or click anywhere to skip</p>
       </div>
 
     </div>

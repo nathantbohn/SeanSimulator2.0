@@ -1,5 +1,51 @@
 'use strict';
 
+// ── Leaderboard ───────────────────────────────────────────────────────────────
+
+const LB_KEY      = 'seanSim2_scores';
+const LB_MAX      = 5;
+
+function loadScores() {
+  try { return JSON.parse(localStorage.getItem(LB_KEY)) || []; }
+  catch { return []; }
+}
+
+function saveScore(name, score) {
+  const scores = loadScores();
+  scores.push({ name: name.trim() || 'PLAYER', score });
+  scores.sort((a, b) => b.score - a.score);
+  scores.splice(LB_MAX);
+  localStorage.setItem(LB_KEY, JSON.stringify(scores));
+  renderLeaderboard();
+}
+
+function renderLeaderboard() {
+  const list   = document.getElementById('lb-list');
+  const scores = loadScores();
+  list.innerHTML = '';
+  if (scores.length === 0) {
+    const li = document.createElement('li');
+    li.textContent = 'No scores yet';
+    li.style.color = '#555';
+    list.appendChild(li);
+    return;
+  }
+  scores.forEach((entry, i) => {
+    const li    = document.createElement('li');
+    const rank  = document.createElement('span');
+    const name  = document.createElement('span');
+    const score = document.createElement('span');
+    rank.className  = 'lb-rank';
+    name.className  = 'lb-name';
+    score.className = 'lb-score';
+    rank.textContent  = (i + 1) + '.';
+    name.textContent  = entry.name;
+    score.textContent = String(entry.score).padStart(5, '0');
+    li.append(rank, name, score);
+    list.appendChild(li);
+  });
+}
+
 // ── Screen Manager ───────────────────────────────────────────────────────────
 
 const screens = {
@@ -116,15 +162,46 @@ function endPrologue() {
   startLevel1Music();
 }
 
+let pendingScore = 0;
+let scoreSubmitted = false;
+
 function onLevel1GameOver(finalScore) {
   stopLevel1Music();
+  pendingScore   = finalScore;
+  scoreSubmitted = false;
   document.getElementById('gameover-score').textContent = 'SCORE: ' + String(finalScore).padStart(5, '0');
+  const nameInput = document.getElementById('gameover-name');
+  nameInput.value = '';
   showScreen('gameover');
+  // Focus the name field after the screen is visible
+  requestAnimationFrame(() => nameInput.focus());
 }
 
-screens.gameover.addEventListener('click', () => {
+function submitScore() {
+  if (scoreSubmitted) return;
+  scoreSubmitted = true;
+  const name = document.getElementById('gameover-name').value;
+  saveScore(name, pendingScore);
+  returnToMenu();
+}
+
+function returnToMenu() {
   showScreen('menu');
   startMenuMusic();
+}
+
+document.getElementById('gameover-submit').addEventListener('click', (e) => {
+  e.stopPropagation();
+  submitScore();
+});
+
+document.getElementById('gameover-name').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { e.stopPropagation(); submitScore(); }
+});
+
+screens.gameover.addEventListener('click', () => {
+  if (!scoreSubmitted) { scoreSubmitted = true; }
+  returnToMenu();
 });
 
 function onPrologueKey(e) {
@@ -164,4 +241,5 @@ window.addEventListener('DOMContentLoaded', () => {
   showScreen('menu');
   loadPrologueTexts();
   startMenuMusic();
+  renderLeaderboard();
 });
