@@ -10,6 +10,7 @@
     <audio id="menu-music"     src="audio-assets/main_menu_music.mp3" loop></audio>
     <audio id="prologue-music" src="audio-assets/Prologue Music.mp3"   loop></audio>
     <audio id="level1-music"   src="audio-assets/level1_music.mp3"     loop></audio>
+    <audio id="level2-music"   src="audio-assets/Level 2 Music.mp3"    loop></audio>
 
     <div id="game-container">
 
@@ -74,6 +75,19 @@
       <!-- Level 2 -->
       <div id="screen-level2" class="screen">
         <canvas id="game-canvas-l2"></canvas>
+      </div>
+
+      <!-- Level 2 Victory -->
+      <div id="screen-level2victory" class="screen">
+        <h1 id="l2v-title">Victory!</h1>
+        <p id="l2v-score"></p>
+        <button class="btn-back" id="btn-l2v-menu">Return to Main Menu</button>
+      </div>
+
+      <!-- Level 2 Game Over -->
+      <div id="screen-level2over" class="screen">
+        <h1 id="l2o-title">Game Over</h1>
+        <p id="l2o-hint">Click anywhere to return to menu</p>
       </div>
 
       <!-- Game Over -->

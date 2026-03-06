@@ -62,6 +62,8 @@ const screens = {
   level1:         document.getElementById('screen-level1'),
   level1complete: document.getElementById('screen-level1complete'),
   level2:         document.getElementById('screen-level2'),
+  level2victory:  document.getElementById('screen-level2victory'),
+  level2over:     document.getElementById('screen-level2over'),
   gameover:       document.getElementById('screen-gameover'),
 };
 
@@ -77,25 +79,42 @@ function showScreen(name) {
 const menuMusic     = document.getElementById('menu-music');
 const prologueMusic = document.getElementById('prologue-music');
 const level1Music   = document.getElementById('level1-music');
+const level2Music   = document.getElementById('level2-music');
+
+let deferredMenuPlay  = null;
+let menuMusicActive   = false;
 
 function startMenuMusic() {
+  // Clear any previous deferred attempt before registering a new one
+  if (deferredMenuPlay) {
+    document.removeEventListener('click', deferredMenuPlay);
+    deferredMenuPlay = null;
+  }
+  menuMusicActive = true;
   prologueMusic.pause();
   prologueMusic.currentTime = 0;
   level1Music.pause();
   level1Music.currentTime = 0;
   menuMusic.currentTime = 0;
   menuMusic.play().catch(() => {
-    document.addEventListener('click', () => menuMusic.play(), { once: true });
+    // Deferred until first click — but only plays if we're still on the menu
+    deferredMenuPlay = function () {
+      deferredMenuPlay = null;
+      if (menuMusicActive) menuMusic.play();
+    };
+    document.addEventListener('click', deferredMenuPlay);
   });
 }
 
 function startPrologueMusic() {
+  menuMusicActive = false;   // tells any pending deferred not to play
   menuMusic.pause();
   prologueMusic.currentTime = 0;
   prologueMusic.play().catch(() => {});
 }
 
 function startLevel1Music() {
+  menuMusicActive = false;
   prologueMusic.pause();
   prologueMusic.currentTime = 0;
   level1Music.currentTime = 0;
@@ -105,6 +124,19 @@ function startLevel1Music() {
 function stopLevel1Music() {
   level1Music.pause();
   level1Music.currentTime = 0;
+}
+
+function startLevel2Music() {
+  menuMusicActive = false;
+  level1Music.pause();
+  level1Music.currentTime = 0;
+  level2Music.currentTime = 0;
+  level2Music.play().catch(() => {});
+}
+
+function stopLevel2Music() {
+  level2Music.pause();
+  level2Music.currentTime = 0;
 }
 
 // ── Prologue ─────────────────────────────────────────────────────────────────
@@ -244,6 +276,7 @@ document.getElementById('btn-about').addEventListener('click', () => {
 
 document.getElementById('btn-l1c-continue').addEventListener('click', () => {
   showScreen('level2');
+  startLevel2Music();
   Level2.start(onLevel2Win, onLevel2Lose);
 });
 
@@ -252,17 +285,28 @@ document.getElementById('btn-l1c-menu').addEventListener('click', () => {
   startMenuMusic();
 });
 
-function onLevel2Win() {
+function onLevel2Win(finalScore) {
+  stopLevel2Music();
   Level2.stop();
-  showScreen('menu');
-  startMenuMusic();
+  document.getElementById('l2v-score').textContent = 'SCORE: ' + String(finalScore).padStart(5, '0');
+  showScreen('level2victory');
 }
 
 function onLevel2Lose() {
+  stopLevel2Music();
   Level2.stop();
+  showScreen('level2over');
+}
+
+document.getElementById('btn-l2v-menu').addEventListener('click', () => {
   showScreen('menu');
   startMenuMusic();
-}
+});
+
+screens.level2over.addEventListener('click', () => {
+  showScreen('menu');
+  startMenuMusic();
+});
 
 document.querySelectorAll('.btn-back').forEach(btn => {
   btn.addEventListener('click', () => {

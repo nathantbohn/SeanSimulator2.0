@@ -556,6 +556,71 @@ html, body {
 #lb-list li .lb-name  { flex: 1; text-transform: uppercase; }
 #lb-list li .lb-score { color: #ffd700; font-variant-numeric: tabular-nums; }
 
+/* ── Level 2 Victory ─────────────────────────────── */
+#screen-level2victory {
+  background: #000;
+  gap: 1.8rem;
+}
+
+#l2v-title {
+  font-family: Impact, 'Arial Black', sans-serif;
+  font-size: clamp(3.5rem, 11vw, 8rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #ffd700;
+  text-shadow:
+    -3px -3px 0 #000,
+     3px -3px 0 #000,
+    -3px  3px 0 #000,
+     3px  3px 0 #000,
+     5px  5px 0 #997700,
+     8px  8px 0 #664400;
+  animation: lc-pulse 1.4s ease-in-out infinite;
+}
+
+#l2v-score {
+  font-family: 'Arial Black', Arial, sans-serif;
+  font-size: clamp(1.2rem, 3.5vw, 2.2rem);
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  color: #ffff00;
+  text-shadow: 0 0 12px rgba(255,255,0,0.6);
+}
+
+/* ── Level 2 Game Over ────────────────────────────── */
+#screen-level2over {
+  background: #000;
+  gap: 1.8rem;
+  cursor: pointer;
+}
+
+#l2o-title {
+  font-family: Impact, 'Arial Black', sans-serif;
+  font-size: clamp(3.5rem, 11vw, 8rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #ff1111;
+  text-shadow:
+    -3px -3px 0 #000,
+     3px -3px 0 #000,
+    -3px  3px 0 #000,
+     3px  3px 0 #000,
+     5px  5px 0 #8b0000,
+     8px  8px 0 #5a0000,
+    10px 10px 0 #2e0000;
+  animation: go-flash 0.9s step-end infinite;
+}
+
+#l2o-hint {
+  font-family: Arial, sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.12em;
+  color: #555;
+  animation: blink 1.4s step-end infinite;
+}
+
 /* ── Prologue ────────────────────────────────────── */
 #screen-prologue {
   position: relative;
