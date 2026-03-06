@@ -20,7 +20,8 @@ const Level1 = (() => {
   const SHOOT_HOLD_MS  = 200;
   const HIT_SHRINK     = 0.22;        // shrink hitbox fraction per side
   const AIR_ENEMY_DELAY = 20000;      // ms before air enemies start appearing
-  const AIR_Y_FACTOR    = 0.44;       // top of air enemy as fraction of canvas height
+  const AIR_Y_MIN       = 0.28;       // highest air enemy can appear (fraction of H)
+  const AIR_Y_MAX       = 0.52;       // lowest air enemy can appear (fraction of H)
 
   // ── State ───────────────────────────────────────────────────────────────────
 
@@ -37,7 +38,7 @@ const Level1 = (() => {
 
   // objects
   let obstacles, airObstacles, projectiles, effects;
-  let spawnTimer, airSpawnTimer, elapsedMs;
+  let spawnTimer, airSpawnTimer, airSpawnTarget, elapsedMs;
 
   // scrolling
   let bgX, bgSpeed;
@@ -129,9 +130,10 @@ const Level1 = (() => {
     airObstacles = [];
     projectiles  = [];
     effects      = [];
-    spawnTimer    = 0;
-    airSpawnTimer = 0;
-    elapsedMs     = 0;
+    spawnTimer      = 0;
+    airSpawnTimer   = 0;
+    airSpawnTarget  = 3200 * (0.6 + Math.random() * 0.8); // first interval randomised
+    elapsedMs       = 0;
 
     // HUD state
     score        = 0;
@@ -305,15 +307,18 @@ const Level1 = (() => {
     const W = canvas.width;
     const H = canvas.height;
 
-    const airSpeed   = 4   + score * 0.025;
-    const airSpawnMs = Math.max(1200, 3200 - score * 4);
-
     airSpawnTimer += dt;
-    if (airSpawnTimer >= airSpawnMs) {
-      airSpawnTimer = 0;
+    if (airSpawnTimer >= airSpawnTarget) {
+      airSpawnTimer  = 0;
+      // randomise next interval: base shrinks with score, ±40% jitter
+      const base     = Math.max(1200, 3200 - score * 4);
+      airSpawnTarget = base * (0.6 + Math.random() * 0.8);
+
+      const airY     = H * (AIR_Y_MIN + Math.random() * (AIR_Y_MAX - AIR_Y_MIN));
+      const airSpeed = 4 + score * 0.025;
       airObstacles.push({
         x:      W + 20,
-        y:      H * AIR_Y_FACTOR,
+        y:      airY,
         w:      airEnemyDW,
         h:      airEnemyDH,
         speed:  airSpeed,
@@ -367,7 +372,7 @@ const Level1 = (() => {
           if (collides(p.x, p.y, p.w, p.h, ob.x, ob.y, ob.w, ob.h)) {
             spawnBurst(ob.x + ob.w * 0.5, ob.y + ob.h * 0.5, '#ffdd00');
             airObstacles.splice(j, 1);
-            score += 5;
+            score += 10;
             hit    = true;
             break;
           }
