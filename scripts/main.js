@@ -61,6 +61,7 @@ const screens = {
   prologue:       document.getElementById('screen-prologue'),
   level1:         document.getElementById('screen-level1'),
   level1complete: document.getElementById('screen-level1complete'),
+  level2:         document.getElementById('screen-level2'),
   gameover:       document.getElementById('screen-gameover'),
 };
 
@@ -241,10 +242,27 @@ document.getElementById('btn-about').addEventListener('click', () => {
   showScreen('about');
 });
 
+document.getElementById('btn-l1c-continue').addEventListener('click', () => {
+  showScreen('level2');
+  Level2.start(onLevel2Win, onLevel2Lose);
+});
+
 document.getElementById('btn-l1c-menu').addEventListener('click', () => {
   showScreen('menu');
   startMenuMusic();
 });
+
+function onLevel2Win() {
+  Level2.stop();
+  showScreen('menu');
+  startMenuMusic();
+}
+
+function onLevel2Lose() {
+  Level2.stop();
+  showScreen('menu');
+  startMenuMusic();
+}
 
 document.querySelectorAll('.btn-back').forEach(btn => {
   btn.addEventListener('click', () => {

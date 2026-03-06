@@ -316,6 +316,19 @@ html, body {
   height: 100%;
 }
 
+/* ── Level 2 Canvas ──────────────────────────────── */
+#screen-level2 {
+  padding: 0;
+  gap: 0;
+  background: #000;
+}
+
+#game-canvas-l2 {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 /* ── Level 1 Complete ────────────────────────────── */
 #screen-level1complete {
   background: #000;
@@ -358,6 +371,30 @@ html, body {
   letter-spacing: 0.2em;
   color: #ffff00;
   text-shadow: 0 0 12px rgba(255,255,0,0.6);
+}
+
+/* Continue to Level 2 button */
+#btn-l1c-continue {
+  font-family: Impact, 'Arial Black', Arial, sans-serif;
+  font-size: clamp(1.3rem, 3.2vw, 2.2rem);
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #000;
+  background: #44ee66;
+  border: 3px solid #22cc44;
+  padding: 0.35rem 1.4rem;
+  cursor: pointer;
+  text-shadow: none;
+  transition: background 0.1s, box-shadow 0.1s;
+  box-shadow: 0 0 18px rgba(50,220,80,0.4);
+}
+
+#btn-l1c-continue:hover,
+#btn-l1c-continue:focus-visible {
+  background: #66ff88;
+  box-shadow: 0 0 30px rgba(80,255,120,0.65);
+  outline: none;
 }
 
 /* ── Game Over ───────────────────────────────────── */

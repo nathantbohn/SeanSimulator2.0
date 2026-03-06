@@ -22,7 +22,7 @@ const Level1 = (() => {
   const AIR_ENEMY_DELAY = 20000;      // ms before air enemies start appearing
   const AIR_Y_MIN       = 0.28;       // highest air enemy can appear (fraction of H)
   const AIR_Y_MAX       = 0.52;       // lowest air enemy can appear (fraction of H)
-  const LEVEL_LENGTH_M  = 5000;       // meters to complete the level
+  const LEVEL_LENGTH_M  = 500;        // meters to complete the level
   const MS_PER_METER    = 30;         // milliseconds per meter (5000m ≈ 150 s)
 
   // ── State ───────────────────────────────────────────────────────────────────
