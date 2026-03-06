@@ -87,7 +87,7 @@ let menuMusicActive   = false;
 function startMenuMusic() {
   // Clear any previous deferred attempt before registering a new one
   if (deferredMenuPlay) {
-    document.removeEventListener('click', deferredMenuPlay);
+    document.removeEventListener('click', deferredMenuPlay, true);
     deferredMenuPlay = null;
   }
   menuMusicActive = true;
@@ -97,12 +97,14 @@ function startMenuMusic() {
   level1Music.currentTime = 0;
   menuMusic.currentTime = 0;
   menuMusic.play().catch(() => {
-    // Deferred until first click — but only plays if we're still on the menu
+    // Register in CAPTURE phase so this fires before any button handler.
+    // If the user clicked "Play", startPrologueMusic() will call pause() immediately
+    // after, causing the play() Promise to reject silently — no audio blip.
     deferredMenuPlay = function () {
       deferredMenuPlay = null;
-      if (menuMusicActive) menuMusic.play();
+      if (menuMusicActive) menuMusic.play().catch(() => {});
     };
-    document.addEventListener('click', deferredMenuPlay);
+    document.addEventListener('click', deferredMenuPlay, true);
   });
 }
 
